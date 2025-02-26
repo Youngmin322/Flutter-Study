@@ -23,7 +23,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: cosnt Text('상품 상세')),
+      appBar: AppBar(title: const Text('상품 상세')),
       body: const Center(child: Text('상품 상세 화면')),
     );
   }
