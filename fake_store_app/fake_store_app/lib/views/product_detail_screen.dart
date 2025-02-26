@@ -16,6 +16,8 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> product;
 
+  int quantity = 1;
+
   @override
   void initState() {
     super.initState();
@@ -26,17 +28,49 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('상품 상세')),
-      body: FutureBuilder(
-        future: product,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('상품을 불러오는 중에 오류가 발생했습니다.'));
-          }
-          return _buildProductDetail(snapshot.data as Product);
-        },
+      body: SafeArea(
+        child: FutureBuilder(
+          future: product,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return const Center(child: Text('상품을 불러오는 중에 오류가 발생했습니다.'));
+            }
+            return Column(
+              children: [
+                Expanded(child: _buildProductDetail(snapshot.data as Product)),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      onPressed: () {
+                        // 장바구니에 담기
+                        print(
+                          '장바구니에 담기: ${snapshot.data!.id} / title: ${snapshot.data!.title}, $quantity',
+                        );
+                      },
+                      child: const Text(
+                        '장바구니에 담기',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -77,27 +111,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 8),
-
             // 수량 선택
-            QuantitySelector(),
-            const SizedBox(height: 24),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                onPressed: () {},
-                child: const Text(
-                  '장바구니에 담기',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
+            QuantitySelector(
+              onQuantityChange: (quantity) {
+                setState(() {
+                  this.quantity = quantity;
+                });
+              },
             ),
           ],
         ),
