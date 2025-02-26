@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+
 import '../models/product.dart';
 import '../services/api_service.dart';
 import '../widgets/quantity_selector.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final int productId;
-  
+
   const ProductDetailScreen({super.key, required this.productId});
 
   @override
@@ -16,7 +16,7 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   late Future<Product> product;
 
-  @override 
+  @override
   void initState() {
     super.initState();
     product = ApiService().getProduct(widget.productId);
@@ -27,11 +27,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('상품 상세')),
       body: FutureBuilder(
-        future: product, 
+        future: product,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
-          } 
+          }
           if (snapshot.hasError) {
             return const Center(child: Text('상품을 불러오는 중에 오류가 발생했습니다.'));
           }
