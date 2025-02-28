@@ -1,3 +1,4 @@
+
 // dart 기본 패키지 임포트
 import 'dart:convert';
 // 서드파티 라이브러리 임포트
@@ -7,6 +8,7 @@ import '../models/product.dart';
 
 class ApiService {
   final String _baseUrl = 'https://fakestoreapi.com';
+  final String _simpleServerUrl = 'http://localhost:3000';
 
   Future<List<Product>> getProducts() async {
     final response = await http.get(Uri.parse('$_baseUrl/products'));
@@ -26,6 +28,17 @@ class ApiService {
       return Product.fromJson(jsonDecode(response.body));
     } else {
       throw 'Failed to load product';
+    }
+  }
+
+  Future<String> createPaymentIntent() async {
+    final response = await http.post(
+      Uri.parse('$_simpleServerUrl/create-payment-intent'),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['clientSecret'];
+    } else {
+      throw 'Failed to create checkout session';
     }
   }
 }

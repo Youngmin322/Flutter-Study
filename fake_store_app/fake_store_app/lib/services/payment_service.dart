@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 
+import 'package:fake_store_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart' as http;
 
 import '../models/cart_item.dart';
 
@@ -15,9 +13,8 @@ class PaymentService {
     required List<CartItem> items,
   }) async {
     try {
-      // 클라이언트에서 임시 Payment Intent 생성 (프로덕션에서는 서버에서 처리해야 함)
-      final clientSecret = await _createTestPaymentIntent(amount);
-
+      final clientSecret = await ApiService().createPaymentIntent();
+      debugPrint('clientSecret: $clientSecret');
       // Stripe 결제 시트 초기화
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -66,12 +63,6 @@ class PaymentService {
         return {'success': false, 'error': '결제 중 오류가 발생했습니다: $e'};
       }
     }
-  }
-
-  Future<String> _createTestPaymentIntent(double amount) async {
-    // 텍스트 기반 결제 인증 로직
-    await Future.delayed(const Duration(seconds: 1));
-    return 'pi_3QxJTaJinXpHIPsE1AwzPqv3_secret_9iSxwhvGjnthO5iyUy10YvUn8';
   }
 
   Future<Map<String, dynamic>> processDummyPayment({
